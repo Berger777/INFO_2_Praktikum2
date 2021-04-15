@@ -7,6 +7,8 @@ import java.util.Random;
 
 /**
  * Klasse zum Trainieren, Speichern und Erstellen von Vokabeln
+ * @author Matthias Groll
+ * @since April 2021
  */
 public class Vokabeltrainer {
 
