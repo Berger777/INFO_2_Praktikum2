@@ -2,18 +2,26 @@ import Exceptions.ListEmptyException;
 import Exceptions.OutOfBounceException;
 
 import java.io.*;
+import java.util.Locale;
 import java.util.Random;
 
+/**
+ * Klasse zum Trainieren, Speichern und Erstellen von Vokabeln
+ */
 public class Vokabeltrainer {
 
-    LinkedList vokabelListe = new LinkedList();
-    boolean loop = true;
-    String input;
-    BufferedReader buff = new BufferedReader(new InputStreamReader(System.in));
+    private final LinkedList vokabelListe = new LinkedList();
+    private boolean loop = true;
+    private final BufferedReader buff = new BufferedReader(new InputStreamReader(System.in));
 
-    public String startTrainer() throws IOException {
+    /**
+     * Hauptfunktion zum Starten des Vokabeltrainers
+     * @return Status-String
+     * @throws IOException Buffered-Reader kann Probleme beim Einlesen melden
+     */
+     public String startTrainer() throws IOException {
         while (loop) {
-            input = buff.readLine();
+            String input = buff.readLine();
             switch (input) {
                 case "close":
                     loop = false;
@@ -24,27 +32,14 @@ public class Vokabeltrainer {
                     addVokabel(eingabe);
                     break;
                 case "del":
-                    //TODO: DELETE
+                    System.out.println("Stichwort zum Löschen eingeben:");
+                    delete();
                     break;
                 case "save":
                     saveVokabeln();
                     break;
                 case "read":
-                    System.out.println("Bitte Dateinamen eingeben:");
-                    String dateiname = buff.readLine();
-                    FileReader fr;
-                    try {
-                        fr = new FileReader(dateiname);
-                    }catch (FileNotFoundException e){
-                        System.out.println("Datei nicht gefunden!");
-                        break;
-                    }
-                    BufferedReader bufferedReader = new BufferedReader(fr);
-                    while(bufferedReader.ready()){
-                        String line = bufferedReader.readLine();
-                        addVokabel(line);
-                    }
-                    fr.close();
+                    vokabelnEinlesen();
                     break;
                 case "print":
                     vokabelListe.printList();
@@ -63,6 +58,45 @@ public class Vokabeltrainer {
         return "Trainer beendet.";
     }
 
+    /**
+     * Methode zum Löschen einer Vokabel mit Konsolen-Dialog
+     * @throws IOException BufferedReader kann Fehler beim Lesen haben
+     */
+    private void delete() throws IOException {
+        String name = buff.readLine();
+        if(vokabelListe.deleteByName(name)){
+            System.out.println("Löschen erfolgreich!");
+        }else{
+            System.out.println("Fehler beim löschen!");
+        }
+    }
+
+    /**
+     * Methode zum Einlesen einer Vokabel mit Konsolen-Dialog
+     * @throws IOException BufferedReader kann Fehler beim Lesen haben
+     */
+    private void vokabelnEinlesen() throws IOException {
+        System.out.println("Bitte Dateinamen eingeben:");
+        String dateiname = buff.readLine();
+        FileReader fr;
+        try {
+            fr = new FileReader(dateiname);
+        }catch (FileNotFoundException e){
+            System.out.println("Datei nicht gefunden!");
+            return;
+        }
+        BufferedReader bufferedReader = new BufferedReader(fr);
+        while(bufferedReader.ready()){
+            String line = bufferedReader.readLine();
+            addVokabel(line);
+        }
+        fr.close();
+    }
+
+    /**
+     * Methode zum Speichern der Vokabeln in einer Datei
+     * @throws IOException FileWriter kann IO-Probleme haben
+     */
     private void saveVokabeln() throws IOException {
         System.out.println("Bitte Dateiname eingeben:");
         String dateiname = buff.readLine()+".txt";
@@ -79,6 +113,11 @@ public class Vokabeltrainer {
         System.out.println("Datei wurde geschrieben!");
     }
 
+    /**
+     * Methode zum zufälligen Abfragen der Vokabeln
+     * @return String mit Fehlermeldung
+     * @throws IOException BufferedReader kann Probleme beim Einlesen haben
+     */
     private String learn() throws IOException {
         int listSize = vokabelListe.listSize();
         if (listSize == 0) {
@@ -96,15 +135,19 @@ public class Vokabeltrainer {
             return "Liste leer!";
         }
         System.out.println("Was bedeutet: " + vok.getVokabel() + " ?");
-        String antwort = buff.readLine();
-        if (antwort.equals(vok.getAntwort())) {
+        String antwort = buff.readLine().toLowerCase(Locale.ROOT);
+        if (antwort.equals(vok.getAntwort().toLowerCase(Locale.ROOT))) {
             System.out.println("Das ist richtig! Super. :-)");
         } else {
-            System.out.println("Das ist leider falsch. :-(");
+            System.out.println("Das ist leider falsch. :-( | Richtig ist: " + vok.getAntwort());
         }
         return null;
     }
 
+    /**
+     * Fügt eine Vokabel hinzu, wird durch RegEx validiert
+     * @param eingabe Vokabel durch ';' getrennt
+     */
     private void addVokabel(String eingabe) {
         if (eingabe.matches("^[^;\\n]+;[^;\\n]+$")) {
             int semiIndex = eingabe.indexOf(';');
@@ -118,6 +161,9 @@ public class Vokabeltrainer {
         }
     }
 
+    /**
+     * Listet alle Befehle auf
+     */
     private void listeBefehleHilfe() {
         System.out.println("Gültige Befehle:");
         System.out.println("------------------");

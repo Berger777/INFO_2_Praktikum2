@@ -1,0 +1,9 @@
+tree;baum
+money;Geld
+fun;Spaß
+hello;Hallo
+moin;;moin
+Mo/§"!=§/="!/=DHWAmkM;DMWA
+keinSemikolon
+;
+;;
