@@ -9,8 +9,8 @@ public class VerketteteListeManager implements VokabelManager{
     public boolean save(Vokabel vokabel) {
         ListElement listElement = new ListElement(vokabel.getVokabel(),vokabel.getAntwort());
         ListElement lastElement = vokabelListe.getLastElementOfList();
-        listElement.setPrev(lastElement);
         lastElement.setNext(listElement);
+        listElement.setPrev(lastElement);
         return true;
     }
 

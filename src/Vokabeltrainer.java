@@ -127,6 +127,9 @@ public class Vokabeltrainer {
      */
     private String learn() throws IOException {
         Vokabel vok = vokabelManager.getRandomVokabel();
+        if (vok == null){
+            return null;
+        }
         System.out.println("Was bedeutet: " + vok.getVokabel() + " ?");
         String antwort = buff.readLine().toLowerCase(Locale.ROOT);
         if (antwort.equals(vok.getAntwort().toLowerCase(Locale.ROOT))) {

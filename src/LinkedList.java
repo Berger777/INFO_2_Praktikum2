@@ -114,7 +114,7 @@ public class LinkedList {
             temp = temp.getNext();
         }
         System.out.println(i+":"+ temp);
-        System.out.println("ListSize: " + listSize());
+        //System.out.println("ListSize: " + listSize());
     }
 
     public void debug(){

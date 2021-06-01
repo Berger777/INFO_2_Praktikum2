@@ -56,4 +56,13 @@ public class ListElement {
     public boolean isFirstElement(){
         return this.prev==null;
     }
+
+    @Override
+    public String toString() {
+        return "ListElement{" +
+                "vokabel=" + vokabel +
+                ", prev=" + prev +
+                ", next=" + next +
+                '}';
+    }
 }
