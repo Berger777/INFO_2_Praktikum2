@@ -1,6 +1,8 @@
 import Exceptions.ListEmptyException;
 import Exceptions.OutOfBounceException;
 
+import java.util.ArrayList;
+
 /**
  * Wrapper-Klasse für die LinkedList
  */
@@ -80,7 +82,7 @@ public class LinkedList {
             temp = temp.getNext();
         }
         do {
-            if(temp.getAntwort().equals(name) || temp.getVokabel().equals(name)){
+            if(temp.getVokabel().getAntwort().equals(name) || temp.getVokabel().getVokabel().equals(name)){
                 if (temp.getNext()==null){  //Letztes Element der Liste
                     temp.getPrev().setNext(null);
                     return true;
@@ -108,24 +110,27 @@ public class LinkedList {
         ListElement temp = rootElement;
         int i = 0;
         while (!temp.isLastElement()){
-            System.out.println(i+++":"+temp.vokabel+ ";"+temp.antwort);
+            System.out.println(i+++":" + temp);
             temp = temp.getNext();
         }
-        System.out.println(i+":"+ temp.vokabel+";"+temp.antwort);
+        System.out.println(i+":"+ temp);
+        System.out.println("ListSize: " + listSize());
     }
 
+    public void debug(){
+        printList();
+    }
     /**
-     * Gibt die Vokabelliste als String-Array zurück
-     * @return Liste als Array
+     * Gibt die VokabelListe als ArrayList zurueck
+     * @return die ArrayList mit den Vokabeln
      */
-    public String[] getVokabelnAsArray(){
-        String[] vok = new String[listSize()];
+    public ArrayList<Vokabel> getElementsAsArrayList() {
+        ArrayList<Vokabel> list = new ArrayList<>();
         ListElement temp = getRootElement();
-        int i = 0;
         while (temp.getNext()!=null){
             temp = temp.getNext();
-            vok[i++] = temp.getVokabel() + ';' + temp.getAntwort()+System.lineSeparator();
+            list.add(temp.getVokabel());
         }
-        return vok;
+        return list;
     }
 }

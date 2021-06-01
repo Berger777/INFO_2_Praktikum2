@@ -1,31 +1,19 @@
 public class ListElement {
-    String vokabel;
-    String antwort;
-    ListElement prev = null;
-    ListElement next = null;
+
+    private Vokabel vokabel;
+    private ListElement prev = null;
+    private ListElement next = null;
 
     public ListElement(String vokabel, String antwort) {
-        this.vokabel = vokabel;
-        this.antwort = antwort;
+         this.vokabel = new Vokabel(vokabel,antwort);
     }
 
-    public ListElement(){
-    }
-
-    public String getVokabel() {
+    public Vokabel getVokabel() {
         return vokabel;
     }
 
-    public void setVokabel(String vokabel) {
+    public void setVokabel(Vokabel vokabel) {
         this.vokabel = vokabel;
-    }
-
-    public String getAntwort() {
-        return antwort;
-    }
-
-    public void setAntwort(String antwort) {
-        this.antwort = antwort;
     }
 
     public ListElement getPrev() {
@@ -46,7 +34,7 @@ public class ListElement {
 
     /**
      * Fügt an das übergebene Element ein weiteres an
-     * @param newElement
+     * @param newElement das neue Element
      */
     public void addElementAfterThis(ListElement newElement){
         this.setNext(newElement);

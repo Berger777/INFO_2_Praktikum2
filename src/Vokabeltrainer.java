@@ -1,9 +1,6 @@
-import Exceptions.ListEmptyException;
-import Exceptions.OutOfBounceException;
-
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Random;
 
 /**
  * Klasse zum Trainieren, Speichern und Erstellen von Vokabeln
@@ -12,16 +9,17 @@ import java.util.Random;
  */
 public class Vokabeltrainer {
 
-    private final LinkedList vokabelListe = new LinkedList();
+    private final DatenBankManager datenBankManager = new DatenBankManager();
+    private final VerketteteListeManager verketteteListeManager = new VerketteteListeManager();
+    private VokabelManager vokabelManager = verketteteListeManager;
     private boolean loop = true;
     private final BufferedReader buff = new BufferedReader(new InputStreamReader(System.in));
 
     /**
      * Hauptfunktion zum Starten des Vokabeltrainers
-     * @return Status-String
      * @throws IOException Buffered-Reader kann Probleme beim Einlesen melden
      */
-     public String startTrainer() throws IOException {
+     public void startTrainer() throws IOException {
         while (loop) {
             String input = buff.readLine();
             switch (input) {
@@ -44,11 +42,18 @@ public class Vokabeltrainer {
                     vokabelnEinlesen();
                     break;
                 case "print":
-                    vokabelListe.printList();
+                    vokabelManager.debug();
                     break;
                 case "learn":
                     String x = learn();
-                    if (x != null) return x;
+                    if (x != null) System.out.println(x);
+                    break;
+                case "switch":
+                    if (vokabelManager instanceof DatenBankManager){
+                        vokabelManager = verketteteListeManager;
+                    }else if (vokabelManager instanceof VerketteteListeManager){
+                        vokabelManager = datenBankManager;
+                    }
                     break;
                 default:
                     System.out.println("Befehl nicht gefunden!");
@@ -57,7 +62,7 @@ public class Vokabeltrainer {
             }
         }
         buff.close();
-        return "Trainer beendet.";
+        System.out.println( "Trainer beendet.");
     }
 
     /**
@@ -66,7 +71,7 @@ public class Vokabeltrainer {
      */
     private void delete() throws IOException {
         String name = buff.readLine();
-        if(vokabelListe.deleteByName(name)){
+        if(vokabelManager.delete(name)){
             System.out.println("Löschen erfolgreich!");
         }else{
             System.out.println("Fehler beim löschen!");
@@ -104,9 +109,9 @@ public class Vokabeltrainer {
         String dateiname = buff.readLine()+".txt";
         FileWriter fw = new FileWriter(dateiname);
         BufferedWriter bufferedWriter = new BufferedWriter(fw);
-        String[] vok = vokabelListe.getVokabelnAsArray();
-        for (String s:vok) {
-            bufferedWriter.write(s);
+        ArrayList<Vokabel> vok = vokabelManager.getAllVokabeln();
+        for (Vokabel v:vok) {
+            bufferedWriter.write(v.toString());
         }
         bufferedWriter.flush();
         fw.flush();
@@ -121,21 +126,7 @@ public class Vokabeltrainer {
      * @throws IOException BufferedReader kann Probleme beim Einlesen haben
      */
     private String learn() throws IOException {
-        int listSize = vokabelListe.listSize();
-        if (listSize == 0) {
-            System.out.println("Liste leer!");
-            return null;
-        }
-        Random random = new Random();
-        int rand = random.nextInt(listSize);
-        ListElement vok;
-        try {
-            vok = vokabelListe.getElementNumber(rand);
-        } catch (OutOfBounceException e) {
-            return "Außerhalb des Listenbereichs.";
-        } catch (ListEmptyException e) {
-            return "Liste leer!";
-        }
+        Vokabel vok = vokabelManager.getRandomVokabel();
         System.out.println("Was bedeutet: " + vok.getVokabel() + " ?");
         String antwort = buff.readLine().toLowerCase(Locale.ROOT);
         if (antwort.equals(vok.getAntwort().toLowerCase(Locale.ROOT))) {
@@ -155,9 +146,12 @@ public class Vokabeltrainer {
             int semiIndex = eingabe.indexOf(';');
             String vokabel = eingabe.substring(0, semiIndex);
             String antwort = eingabe.substring(semiIndex + 1);
-            ListElement newElement = new ListElement(vokabel, antwort);
-            vokabelListe.getLastElementOfList().addElementAfterThis(newElement);
-            System.out.println("Vokabel erfolgreich hinzugefuegt!");
+            Vokabel vokabelElement = new Vokabel(vokabel, antwort);
+            if (vokabelManager.save(vokabelElement)){
+                System.out.println("Vokabel erfolgreich hinzugefuegt!");
+            }else {
+                System.err.println("Vokabeln speichern nicht erfolgreich!");
+            }
         } else {
             System.out.println("Vokabel fehlerhaft! Vokabel und Antwort mit ; trennen! Fehlerhafte Vokabel:" + eingabe);
         }
