@@ -110,8 +110,9 @@ public class LinkedList {
         ListElement temp = rootElement;
         int i = 0;
         while (!temp.isLastElement()){
-            System.out.println(i+++":" + temp);
+            System.out.println(i+":" + temp);
             temp = temp.getNext();
+            i++;
         }
         System.out.println(i+":"+ temp);
         //System.out.println("ListSize: " + listSize());

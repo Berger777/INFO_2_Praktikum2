@@ -8,6 +8,10 @@ public class ListElement {
          this.vokabel = new Vokabel(vokabel,antwort);
     }
 
+    public ListElement(Vokabel vokabel) {
+        this.vokabel = vokabel;
+    }
+
     public Vokabel getVokabel() {
         return vokabel;
     }
@@ -59,10 +63,6 @@ public class ListElement {
 
     @Override
     public String toString() {
-        return "ListElement{" +
-                "vokabel=" + vokabel +
-                ", prev=" + prev +
-                ", next=" + next +
-                '}';
+        return vokabel.toString();
     }
 }

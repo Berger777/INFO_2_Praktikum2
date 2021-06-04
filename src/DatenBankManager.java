@@ -1,10 +1,10 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Klasse die das Interface VokabelnManger implementiert und eine Datenbankschnittstelle bereitstellt
+ */
 public class DatenBankManager implements VokabelManager{
 
     private Connection connection;
@@ -30,6 +30,11 @@ public class DatenBankManager implements VokabelManager{
         System.out.println("Verbindung zur Datenbank hergestellt!");
     }
 
+    /**
+     * Speichert eine Vokabel auf der Datenbank
+     * @param vokabel - die zu speichernde Vokabel
+     * @return im erfolgsfall true
+     */
     @Override
     public boolean save(Vokabel vokabel) {
         try {
@@ -45,11 +50,29 @@ public class DatenBankManager implements VokabelManager{
         return true;
     }
 
+    /**
+     * Loescht eine Vokabel
+     * @param vokabelDeutsch vokabel nach der gesucht wird
+     * @return true wenn das Loeschen erfolgreich war
+     */
     @Override
     public boolean delete(String vokabelDeutsch) {
-        return false;
+        try {
+            String sql = "DELETE FROM vokabeln WHERE de = ?";
+            PreparedStatement statement = this.connection.prepareStatement(sql);
+            statement.setString(1, vokabelDeutsch);
+            statement.execute();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
+    /**
+     * Gibt eine random Vokabel zurueck
+     * @return die random Vokabel
+     */
     @Override
     public Vokabel getRandomVokabel() {
         Vokabel vok;
@@ -72,12 +95,35 @@ public class DatenBankManager implements VokabelManager{
         return vok;
     }
 
+    /**
+     * Gibt alle Vokabeln als ArrayListe aus der Datenbank zurueck
+     * @return die ArrayList
+     */
     @Override
     public ArrayList<Vokabel> getAllVokabeln() {
-        return null;
+        ArrayList<Vokabel> vokabelListe = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM VOKABELN";
+            PreparedStatement statement = this.connection.prepareStatement(sql);
+            ResultSet rs  = statement.executeQuery();
+
+            while (rs.next()){
+                Vokabel vokabel = new Vokabel(rs.getString("en"),rs.getString("de"));
+                vokabelListe.add(vokabel);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return vokabelListe;
     }
 
+    /**
+     * Zu Debug Zwecken eine Ausgabe der Vokabeln
+     */
     @Override
     public void debug() {
+        for (Vokabel v:getAllVokabeln()) {
+            System.out.println(v);
+        }
     }
 }

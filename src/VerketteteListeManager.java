@@ -7,7 +7,7 @@ public class VerketteteListeManager implements VokabelManager{
 
     @Override
     public boolean save(Vokabel vokabel) {
-        ListElement listElement = new ListElement(vokabel.getVokabel(),vokabel.getAntwort());
+        ListElement listElement = new ListElement(vokabel);
         ListElement lastElement = vokabelListe.getLastElementOfList();
         lastElement.setNext(listElement);
         listElement.setPrev(lastElement);
